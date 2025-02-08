@@ -14,6 +14,8 @@ return {
     "onsails/lspkind.nvim", -- vs-code like pictograms
     "luckasRanarison/tailwind-tools.nvim", -- tailwind tools
     "onsails/lspkind-nvim", -- lspkind
+    "akinsho/flutter-tools.nvim",
+
   },
   config = function()
     local cmp = require("cmp")

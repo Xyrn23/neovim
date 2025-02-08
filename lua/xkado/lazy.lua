@@ -20,4 +20,3 @@ require("lazy").setup({ { import = "xkado.plugins" }, { import = "xkado.plugins.
     notify = false,
   },
 })
-

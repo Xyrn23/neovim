@@ -2,6 +2,7 @@ return {
   "neovim/nvim-lspconfig",
   opts = {
   servers = {
+    dartls = {},
     tailwindcss = {
       -- exclude a filetype from the default_config
       filetypes_exclude = { "markdown" },
@@ -164,6 +165,7 @@ return {
           filetypes = { "html", "typescriptreact", "javascriptreact"},
         })
       end,
+
 
       ["lua_ls"] = function()
         -- configure lua server (with special settings)

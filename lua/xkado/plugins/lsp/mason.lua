@@ -22,14 +22,19 @@ return {
             -- -- list of servers for mason to install
             ensure_installed = {
                 "lua_ls",
-    
             },
             automatic_installation = true,
         })
 
         mason_tool_installer.setup({
             ensure_installed = {
-                "prettierd"
+                "prettier",
+                "isort",
+                "black",
+                "eslint_d",
+                "pylint",
+                "luaformatter"
+
             },
         })
     end,

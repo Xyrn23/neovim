@@ -18,7 +18,7 @@ return {
         markdown = { "prettier" },
         graphql = { "prettier" },
         liquid = { "prettier" },
-        lua = { "stylua" },
+        lua = { "luaformatter" },
         python = { "isort", "black" },
       },
       format_on_save = {

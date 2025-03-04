@@ -11,7 +11,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup({ { import = "xkado.plugins" }, { import = "xkado.plugins.lsp"} }, {
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*.aliases",
+  callback = function()
+    vim.bo.filetype = "sh" -- Set filetype to 'sh' for .aliases files
+  end,
+})
+
+require("lazy").setup({ { import = "xkado.plugins" }, { import = "xkado.plugins.lsp" } }, {
   checker = {
     enabled = true,
     notify = false,

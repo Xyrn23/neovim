@@ -1,0 +1,55 @@
+return {
+  "folke/tokyonight.nvim",
+  priority = 1000,
+  config = function()
+    local transparent = true
+
+    local bg = "#1a092d"
+    local bg_dark = "#150724"
+    local bg_highlight = "#3e1f47"
+    local bg_search = "#8b44aa"
+    local bg_visual = "#6d2c91"
+    local fg = "#e0d3f5"
+    local fg_dark = "#c2aee0"
+    local fg_gutter = "#a074c4"
+    local border = "#a379c9"
+
+    require("tokyonight").setup({
+      style = "night",
+      transparent = transparent,
+      styles = {
+        sidebars = transparent and "transparent" or "dark",
+        floats = transparent and "transparent" or "dark",
+      },
+      on_colors = function(colors)
+        colors.none = "NONE"
+        colors.bg = bg
+        colors.bg_dark = transparent and colors.none or bg_dark
+        colors.bg_float = transparent and colors.none or bg_dark
+        colors.bg_highlight = bg_highlight
+        colors.bg_popup = bg_dark
+        colors.bg_search = bg_search
+        colors.bg_sidebar = transparent and colors.none or bg_dark
+        colors.bg_statusline = transparent and colors.none or bg_dark
+        colors.bg_visual = bg_visual
+        colors.border = border
+        colors.fg = fg
+        colors.fg_dark = fg_dark
+        colors.fg_float = fg
+        colors.fg_gutter = fg_gutter
+        colors.fg_sidebar = fg_dark
+        colors.comment = "#9e7bb3"
+        colors.keyword = "#c586e0"
+        colors.identifier = "#d4b0f0"
+        colors.statement = "#b97cd9"
+        colors.type = "#cc8ef0"
+        colors.constant = "#de9bf8"
+        colors.string = "#c679d5"
+        colors["function"] = "#dfb1ff"
+        colors.variable = fg
+      end
+    })
+
+    vim.cmd([[colorscheme tokyonight]])
+  end
+}

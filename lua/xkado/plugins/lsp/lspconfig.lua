@@ -1,46 +1,12 @@
+---@diagnostic disable: deprecated
 return {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
-    { "folke/neodev.nvim", opts = {} },
+    { "folke/neodev.nvim",                   opts = {} },
     "williamboman/mason.nvim",
-  },
-  opts = {
-    servers = {
-      tailwindcss = {
-        filetypes_exclude = { "markdown" },
-      },
-    },
-    setup = {
-      tailwindcss = function(_, opts)
-        local tw = require("lspconfig.server_configurations.tailwindcss")
-        opts.filetypes = opts.filetypes or {}
-
-        -- Extend default filetypes
-        vim.list_extend(opts.filetypes, tw.default_config.filetypes)
-
-        -- Filter out excluded filetypes
-        opts.filetypes = vim.tbl_filter(function(ft)
-          return not vim.tbl_contains(opts.filetypes_exclude or {}, ft)
-        end, opts.filetypes)
-
-        -- Add include filetypes
-        vim.list_extend(opts.filetypes, opts.filetypes_include or {})
-
-        -- Configure TailwindCSS settings
-        opts.settings = {
-          tailwindCSS = {
-            includeLanguages = {
-              elixir = "html-eex",
-              eelixir = "html-eex",
-              heex = "html-eex",
-            },
-          },
-        }
-      end,
-    },
   },
   config = function()
     local lspconfig = require("lspconfig")
@@ -56,19 +22,19 @@ return {
 
         -- Keybindings for LSP functionality
         local mappings = {
-          { "n", "gR", "<cmd>Telescope lsp_references<CR>", "Show LSP references" },
-          { "n", "gD", vim.lsp.buf.declaration, "Go to declaration" },
-          { "n", "gd", "<cmd>Telescope lsp_definitions<CR>", "Show LSP definitions" },
-          { "n", "gi", "<cmd>Telescope lsp_implementations<CR>", "Show LSP implementations" },
-          { "n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", "Show LSP type definitions" },
-          { { "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "See available code actions" },
-          { "n", "<leader>rn", vim.lsp.buf.rename, "Smart rename" },
-          { "n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", "Show buffer diagnostics" },
-          { "n", "<leader>d", vim.diagnostic.open_float, "Show line diagnostics" },
-          { "n", "[d", vim.diagnostic.goto_prev, "Go to previous diagnostic" },
-          { "n", "]d", vim.diagnostic.goto_next, "Go to next diagnostic" },
-          { "n", "K", vim.lsp.buf.hover, "Show documentation for what is under cursor" },
-          { "n", "<leader>rs", ":LspRestart<CR>", "Restart LSP" },
+          { "n",          "gR",         "<cmd>Telescope lsp_references<CR>",       "Show LSP references" },
+          { "n",          "gD",         vim.lsp.buf.declaration,                   "Go to declaration" },
+          { "n",          "gd",         "<cmd>Telescope lsp_definitions<CR>",      "Show LSP definitions" },
+          { "n",          "gi",         "<cmd>Telescope lsp_implementations<CR>",  "Show LSP implementations" },
+          { "n",          "gt",         "<cmd>Telescope lsp_type_definitions<CR>", "Show LSP type definitions" },
+          { { "n", "v" }, "<leader>ca", vim.lsp.buf.code_action,                   "See available code actions" },
+          { "n",          "<leader>rn", vim.lsp.buf.rename,                        "Smart rename" },
+          { "n",          "<leader>D",  "<cmd>Telescope diagnostics bufnr=0<CR>",  "Show buffer diagnostics" },
+          { "n",          "<leader>d",  vim.diagnostic.open_float,                 "Show line diagnostics" },
+          { "n",          "[d",         vim.diagnostic.goto_prev,                  "Go to previous diagnostic" },
+          { "n",          "]d",         vim.diagnostic.goto_next,                  "Go to next diagnostic" },
+          { "n",          "K",          vim.lsp.buf.hover,                         "Show documentation for what is under cursor" },
+          { "n",          "<leader>rs", ":LspRestart<CR>",                         "Restart LSP" },
         }
 
         for _, mapping in ipairs(mappings) do
@@ -80,7 +46,7 @@ return {
 
     -- Enable autocompletion for LSP
     local capabilities = cmp_nvim_lsp.default_capabilities()
-
+    local util = require("lspconfig.util")
     -- Set custom diagnostic symbols
     local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
     for type, icon in pairs(signs) do
@@ -90,30 +56,36 @@ return {
 
     -- Configure LSP servers
     mason_lspconfig.setup_handlers({
-      -- Default handler for installed servers
       function(server_name)
+        if server_name == "jdtls" or server_name == "java_language_server" then
+          return
+        end
         lspconfig[server_name].setup({ capabilities = capabilities })
       end,
 
       -- Custom server configurations
-      ["svelte"] = function()
-        lspconfig.svelte.setup({
+      ["jdtls"] = function()
+        lspconfig.jdtls.setup({
           capabilities = capabilities,
-          on_attach = function(client, bufnr)
-            vim.api.nvim_create_autocmd("BufWritePost", {
-              pattern = { "*.js", "*.ts" },
-              callback = function(ctx)
-                client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-              end,
-            })
+          cmd = { "jdtls" },
+          filetypes = { "java" },
+          root_dir = function(fname)
+            return util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle")(fname)
           end,
+          settings = {},
+          init_options = {
+            bundles = {},
+          },
         })
       end,
 
-      ["graphql"] = function()
-        lspconfig.graphql.setup({
+      ["java_language_server"] = function()
+        lspconfig.java_language_server.setup({
           capabilities = capabilities,
-          filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+          cmd = { "java-language-server" },
+          filetypes = { "java" },
+          root_dir = util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle"),
+          settings = {},
         })
       end,
 

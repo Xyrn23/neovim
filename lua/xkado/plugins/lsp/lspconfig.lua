@@ -103,6 +103,20 @@ return {
         })
       end,
 
+      ["clangd"] = function()
+        lspconfig.clangd.setup({
+          capabilities = capabilities,
+          filetypes = { "cpp", "c" },
+        })
+      end,
+
+      ["cpptools"] = function()
+        lspconfig.cpptools.setup({
+          capabilities = capabilities,
+          filetypes = { "cpp", "c" },
+        })
+      end,
+
       ["lua_ls"] = function()
         lspconfig.lua_ls.setup({
           capabilities = capabilities,
